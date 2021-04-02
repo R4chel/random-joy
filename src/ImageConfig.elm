@@ -1,4 +1,4 @@
-module ImageConfig exposing (ImageConfig, Msg(..), init, update, view)
+module ImageConfig exposing (ConfigMode(..), ImageConfig, Msg(..), init, update, view)
 
 import Basics exposing (Float, Int)
 import Element exposing (Element, text)
@@ -13,6 +13,11 @@ import Svg.Attributes exposing (strokeWidth)
 -- MODEL
 
 
+type ConfigMode
+    = Global
+    | PerCircle
+
+
 type alias ImageConfig =
     { height : Int
     , width : Int
@@ -20,14 +25,14 @@ type alias ImageConfig =
     , maxCircles : Int
     , radius : Int
     , colorDelta : Int
-    , opacity : Float
+    , globalOpacity : Float
+    , opacityMode : ConfigMode
     , strokeWidth : Int
     }
 
 
 
 -- INIT
--- TODO: don't need both slider and values in config, slider contains value
 
 
 init : () -> ImageConfig
@@ -38,8 +43,9 @@ init () =
     , colorDelta = 5
     , maxCircles = 1000
     , radius = 5
-    , opacity = 1
+    , globalOpacity = 1
     , strokeWidth = 1
+    , opacityMode = Global
     }
 
 
@@ -75,7 +81,7 @@ update msg imageConfig =
             { imageConfig | strokeWidth = round value }
 
         UpdateOpacity value ->
-            { imageConfig | opacity = value }
+            { imageConfig | globalOpacity = value }
 
 
 
@@ -121,15 +127,20 @@ view imageConfig =
             , value = toFloat imageConfig.radius
             , thumb = Input.defaultThumb
             }
-        , Input.slider Slider.simple
-            { onChange = UpdateOpacity
-            , label = Input.labelAbove [] (text ("Opacity: " ++ String.fromFloat imageConfig.opacity))
-            , min = 0
-            , max = 1
-            , step = Just 0.05
-            , value = imageConfig.opacity
-            , thumb = Input.defaultThumb
-            }
+        , case imageConfig.opacityMode of
+            Global ->
+                Input.slider Slider.simple
+                    { onChange = UpdateOpacity
+                    , label = Input.labelAbove [] (text ("Opacity: " ++ String.fromFloat imageConfig.globalOpacity))
+                    , min = 0
+                    , max = 1
+                    , step = Just 0.05
+                    , value = imageConfig.globalOpacity
+                    , thumb = Input.defaultThumb
+                    }
+
+            PerCircle ->
+                text "Do something"
         , Input.slider Slider.simple
             { onChange = UpdateStrokeWidth
             , label = Input.labelAbove [] (text ("Stroke Width: " ++ String.fromInt imageConfig.strokeWidth))

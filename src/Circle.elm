@@ -1,8 +1,8 @@
-module Circle exposing (Circle, CircleUpdate, ColorUpdate, ComparablePosition, InternalColor, fillColor, generate, newCircle, randomCircleUpdate, updateCircle)
+module Circle exposing (Circle, CircleUpdate, ColorUpdate, ComparablePosition, InternalColor, fillColor, generate, generateCircleUpdate, opacity, updateCircle)
 
 import Color exposing (Color)
 import Direction exposing (Direction)
-import ImageConfig exposing (ImageConfig)
+import ImageConfig exposing (ConfigMode(..), ImageConfig)
 import Random
 
 
@@ -11,11 +11,11 @@ type alias ColorUpdate =
 
 
 type alias CircleUpdate =
-    { direction : Direction, colorUpdate : ColorUpdate }
+    { direction : Direction, colorUpdate : ColorUpdate, opacity : Float }
 
 
-randomColorUpdate : ImageConfig -> Random.Generator ColorUpdate
-randomColorUpdate imageConfig =
+generateColorUpdate : ImageConfig -> Random.Generator ColorUpdate
+generateColorUpdate imageConfig =
     let
         low =
             -1 * imageConfig.colorDelta
@@ -31,12 +31,13 @@ randomColorUpdate imageConfig =
         (Random.uniform low [ high ])
 
 
-randomCircleUpdate : ImageConfig -> Random.Generator CircleUpdate
-randomCircleUpdate imageConfig =
-    Random.map2
+generateCircleUpdate : ImageConfig -> Random.Generator CircleUpdate
+generateCircleUpdate imageConfig =
+    Random.map3
         CircleUpdate
         (Direction.generator imageConfig.positionDelta)
-        (randomColorUpdate imageConfig)
+        (generateColorUpdate imageConfig)
+        (Random.float 0 1)
 
 
 type alias Position =
@@ -88,12 +89,8 @@ type alias Circle =
     { position : Position
     , color : InternalColor
     , radius : Int
+    , opacity : Float
     }
-
-
-newCircle : Circle
-newCircle =
-    { position = { x = 10, y = 10 }, color = { red = 100, green = 0, blue = 100 }, radius = 5 }
 
 
 
@@ -120,6 +117,7 @@ updateCircle imageConfig circleUpdate circle =
     { position = updatePosition imageConfig circleUpdate.direction circle.position
     , color = updateColor circle.color circleUpdate.colorUpdate
     , radius = circle.radius
+    , opacity = circleUpdate.opacity
     }
 
 
@@ -130,8 +128,19 @@ fillColor circle =
 
 generate : ImageConfig -> Random.Generator Circle
 generate imageConfig =
-    Random.map3
+    Random.map4
         Circle
         (generatePosition imageConfig)
         internalColorGenerate
-        (Random.int 5 5)
+        (Random.int 1 20)
+        (Random.float 0 1)
+
+
+opacity : ImageConfig -> Circle -> Float
+opacity imageConfig circle =
+    case imageConfig.opacityMode of
+        Global ->
+            imageConfig.globalOpacity
+
+        PerCircle ->
+            circle.opacity

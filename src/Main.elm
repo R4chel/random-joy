@@ -124,7 +124,7 @@ update msg model =
             ( model
             , Cmd.batch
                 (List.repeat model.stepsPerUpdate
-                    (Random.generate Step (Circle.randomCircleUpdate model.imageConfig))
+                    (Random.generate Step (Circle.generateCircleUpdate model.imageConfig))
                 )
             )
 
@@ -239,7 +239,7 @@ viewCircle imageConfig c =
         , r (String.fromInt imageConfig.radius)
         , fill (Circle.fillColor c)
         , stroke (Circle.fillColor c)
-        , fillOpacity (String.fromFloat imageConfig.opacity)
+        , fillOpacity (String.fromFloat (Circle.opacity imageConfig c))
         , strokeWidth (String.fromInt imageConfig.strokeWidth)
         ]
         []
