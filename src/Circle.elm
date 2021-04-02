@@ -97,10 +97,35 @@ type alias Circle =
 -- UPDATE
 
 
+boundedPositionUpdate : Int -> Int -> Int -> Int
+boundedPositionUpdate min max value =
+    let
+        recBoundedPositionUpdate =
+            boundedPositionUpdate min max
+    in
+    case compare value min of
+        LT ->
+            recBoundedPositionUpdate (2 * min - value)
+
+        EQ ->
+            value
+
+        GT ->
+            case compare value max of
+                GT ->
+                    recBoundedPositionUpdate (2 * max - value)
+
+                LT ->
+                    value
+
+                EQ ->
+                    value
+
+
 updatePosition : ImageConfig -> Direction -> Position -> Position
 updatePosition imageConfig direction position =
-    { x = clamp 0 imageConfig.width (position.x + direction.xDelta)
-    , y = clamp 0 imageConfig.height (position.y + direction.yDelta)
+    { x = boundedPositionUpdate 0 imageConfig.width (position.x + direction.xDelta)
+    , y = boundedPositionUpdate 0 imageConfig.height (position.y + direction.yDelta)
     }
 
 
