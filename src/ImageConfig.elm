@@ -1,7 +1,7 @@
 module ImageConfig exposing (ConfigMode(..), ImageConfig, Msg(..), init, update, view)
 
 import Basics exposing (Float, Int)
-import Element exposing (Element, fillPortion, padding, spacing, text)
+import Element exposing (Element, fillPortion, padding, px, spacing, text)
 import Element.Input as Input
 import Framework exposing (layout)
 import Framework.Card as Card
@@ -97,8 +97,12 @@ update msg imageConfig =
 
 view : ImageConfig -> Element Msg
 view imageConfig =
-    Element.column [ Element.height Element.fill, spacing 30, padding 10 ]
-        [ Input.slider (Slider.simple ++ [ Element.width (Element.fillPortion 2) ])
+    Element.column [ Element.height Element.fill, spacing 30, padding 10, Element.width (px 300) ]
+        [ Input.slider
+            (Slider.simple
+                ++ [ Element.width (Element.fillPortion 2)
+                   ]
+            )
             { onChange = UpdatePositionDelta
             , label = Input.labelAbove FrameworkInput.label (text ("Position Delta: " ++ String.fromInt imageConfig.positionDelta))
             , min = 0
@@ -134,20 +138,15 @@ view imageConfig =
             , value = toFloat imageConfig.radius
             , thumb = Input.thumb Slider.thumb
             }
-        , Input.slider Slider.simple
-            { onChange = UpdateStrokeWidth
-            , label = Input.labelAbove FrameworkInput.label (text ("Stroke Width: " ++ String.fromInt imageConfig.strokeWidth))
-            , min = 0
-            , max = 100
-            , step = Just 1
-            , value = toFloat imageConfig.strokeWidth
-            , thumb = Input.thumb Slider.thumb
-            }
-        , Element.column
-            []
+        , Element.row
+            [ padding 10
+            , spacing 20
+            , Element.width (px 600)
+            ]
             [ Input.radioRow
                 [ padding 10
                 , spacing 20
+                , Element.width (px 300)
                 ]
                 { onChange = ChooseOpacityConfigMode
                 , selected = Just imageConfig.opacityMode
@@ -172,4 +171,13 @@ view imageConfig =
                 PerCircle ->
                     Element.none
             ]
+        , Input.slider Slider.simple
+            { onChange = UpdateStrokeWidth
+            , label = Input.labelAbove FrameworkInput.label (text ("Stroke Width: " ++ String.fromInt imageConfig.strokeWidth))
+            , min = 0
+            , max = 100
+            , step = Just 1
+            , value = toFloat imageConfig.strokeWidth
+            , thumb = Input.thumb Slider.thumb
+            }
         ]
