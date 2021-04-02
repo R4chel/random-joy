@@ -4,6 +4,9 @@ import Basics exposing (Float, Int)
 import Element exposing (Element, fillPortion, padding, spacing, text)
 import Element.Input as Input
 import Framework exposing (layout)
+import Framework.Card as Card
+import Framework.Grid as Grid
+import Framework.Input as FrameworkInput
 import Framework.Slider as Slider
 import Html exposing (Html, button, div)
 import Svg.Attributes exposing (strokeWidth)
@@ -95,53 +98,60 @@ update msg imageConfig =
 view : ImageConfig -> Element Msg
 view imageConfig =
     Element.column [ Element.height Element.fill, spacing 30, padding 10 ]
-        [ Input.slider Slider.simple
+        [ Input.slider (Slider.simple ++ [ Element.width (Element.fillPortion 2) ])
             { onChange = UpdatePositionDelta
-            , label = Input.labelAbove [] (text ("Position Delta: " ++ String.fromInt imageConfig.positionDelta))
+            , label = Input.labelAbove FrameworkInput.label (text ("Position Delta: " ++ String.fromInt imageConfig.positionDelta))
             , min = 0
             , max = 100
             , step = Just 1
             , value = toFloat imageConfig.positionDelta
-            , thumb = Input.defaultThumb
+            , thumb = Input.thumb Slider.thumb
             }
         , Input.slider Slider.simple
             { onChange = UpdateColorDelta
-            , label = Input.labelAbove [] (text ("Color Delta: " ++ String.fromInt imageConfig.colorDelta))
+            , label = Input.labelAbove FrameworkInput.label (text ("Color Delta: " ++ String.fromInt imageConfig.colorDelta))
             , min = 0
             , max = 30
             , step = Just 1
             , value = toFloat imageConfig.colorDelta
-            , thumb = Input.defaultThumb
+            , thumb = Input.thumb Slider.thumb
             }
         , Input.slider Slider.simple
             { onChange = UpdateMaxCircles
-            , label = Input.labelAbove [] (text ("Max Circles: " ++ String.fromInt imageConfig.maxCircles))
+            , label = Input.labelAbove FrameworkInput.label (text ("Max Circles: " ++ String.fromInt imageConfig.maxCircles))
             , min = 1
             , max = 10000
             , step = Just 100
             , value = toFloat imageConfig.maxCircles
-            , thumb = Input.defaultThumb
+            , thumb = Input.thumb Slider.thumb
             }
         , Input.slider Slider.simple
             { onChange = UpdateRadius
-            , label = Input.labelAbove [] (text ("Radius: " ++ String.fromInt imageConfig.radius))
+            , label = Input.labelAbove FrameworkInput.label (text ("Radius: " ++ String.fromInt imageConfig.radius))
             , min = 1
             , max = 100
             , step = Just 1
             , value = toFloat imageConfig.radius
-            , thumb = Input.defaultThumb
+            , thumb = Input.thumb Slider.thumb
             }
-        , Element.row
-            [ padding 10
-            , spacing 20
-            ]
+        , Input.slider Slider.simple
+            { onChange = UpdateStrokeWidth
+            , label = Input.labelAbove FrameworkInput.label (text ("Stroke Width: " ++ String.fromInt imageConfig.strokeWidth))
+            , min = 0
+            , max = 100
+            , step = Just 1
+            , value = toFloat imageConfig.strokeWidth
+            , thumb = Input.thumb Slider.thumb
+            }
+        , Element.column
+            []
             [ Input.radioRow
                 [ padding 10
                 , spacing 20
                 ]
                 { onChange = ChooseOpacityConfigMode
                 , selected = Just imageConfig.opacityMode
-                , label = Input.labelAbove [] (text "Opacity Mode")
+                , label = Input.labelAbove FrameworkInput.label (text "Opacity Mode")
                 , options =
                     [ Input.option Global (text "Global")
                     , Input.option PerCircle (text "Random")
@@ -151,24 +161,15 @@ view imageConfig =
                 Global ->
                     Input.slider Slider.simple
                         { onChange = UpdateOpacity
-                        , label = Input.labelAbove [] (text ("Opacity: " ++ String.fromFloat imageConfig.globalOpacity))
+                        , label = Input.labelAbove FrameworkInput.label (text ("Opacity: " ++ String.fromFloat imageConfig.globalOpacity))
                         , min = 0
                         , max = 1
                         , step = Just 0.05
                         , value = imageConfig.globalOpacity
-                        , thumb = Input.defaultThumb
+                        , thumb = Input.thumb Slider.thumb
                         }
 
                 PerCircle ->
                     Element.none
             ]
-        , Input.slider Slider.simple
-            { onChange = UpdateStrokeWidth
-            , label = Input.labelAbove [] (text ("Stroke Width: " ++ String.fromInt imageConfig.strokeWidth))
-            , min = 0
-            , max = 100
-            , step = Just 1
-            , value = toFloat imageConfig.strokeWidth
-            , thumb = Input.defaultThumb
-            }
         ]

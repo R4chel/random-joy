@@ -9,6 +9,8 @@ import Element.Input as Input
 import Framework exposing (layout)
 import Framework.Button as Button
 import Framework.Color as FrameworkColor
+import Framework.Grid as Grid
+import Framework.Group as Group
 import Html exposing (Html, div, h1, img, text)
 import Html.Attributes exposing (id, src)
 import ImageConfig exposing (ImageConfig, Msg(..))
@@ -195,7 +197,8 @@ artView model =
 
 controlPanelView : Model -> Element Msg
 controlPanelView model =
-    Element.column [ Element.height Element.fill, Element.width Element.fill ]
+    Element.column
+        [ Element.height Element.fill ]
         [ ImageConfig.view model.imageConfig |> Element.map (\x -> UpdateImageConfig x) ]
 
 
