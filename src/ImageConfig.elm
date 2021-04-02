@@ -1,7 +1,7 @@
 module ImageConfig exposing (ConfigMode(..), ImageConfig, Msg(..), init, update, view)
 
 import Basics exposing (Float, Int)
-import Element exposing (Element, text)
+import Element exposing (Element, padding, spacing, text)
 import Element.Input as Input
 import Framework exposing (layout)
 import Framework.Slider as Slider
@@ -54,7 +54,8 @@ init () =
 
 
 type Msg
-    = UpdatePositionDelta Float
+    = ChooseOpacityConfigMode ConfigMode
+    | UpdatePositionDelta Float
     | UpdateColorDelta Float
     | UpdateMaxCircles Float
     | UpdateRadius Float
@@ -65,6 +66,9 @@ type Msg
 update : Msg -> ImageConfig -> ImageConfig
 update msg imageConfig =
     case msg of
+        ChooseOpacityConfigMode configMode ->
+            { imageConfig | opacityMode = configMode }
+
         UpdatePositionDelta value ->
             { imageConfig | positionDelta = round value }
 
@@ -127,6 +131,18 @@ view imageConfig =
             , value = toFloat imageConfig.radius
             , thumb = Input.defaultThumb
             }
+        , Input.radioRow
+            [ padding 10
+            , spacing 20
+            ]
+            { onChange = ChooseOpacityConfigMode
+            , selected = Just imageConfig.opacityMode
+            , label = Input.labelAbove [] (text "Opacity Mode")
+            , options =
+                [ Input.option Global (text "Global")
+                , Input.option PerCircle (text "Random")
+                ]
+            }
         , case imageConfig.opacityMode of
             Global ->
                 Input.slider Slider.simple
@@ -140,7 +156,7 @@ view imageConfig =
                     }
 
             PerCircle ->
-                text "Do something"
+                Element.none
         , Input.slider Slider.simple
             { onChange = UpdateStrokeWidth
             , label = Input.labelAbove [] (text ("Stroke Width: " ++ String.fromInt imageConfig.strokeWidth))
