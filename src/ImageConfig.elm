@@ -1,7 +1,7 @@
 module ImageConfig exposing (ConfigMode(..), ImageConfig, Msg(..), init, update, view)
 
 import Basics exposing (Float, Int)
-import Element exposing (Element, padding, spacing, text)
+import Element exposing (Element, fillPortion, padding, spacing, text)
 import Element.Input as Input
 import Framework exposing (layout)
 import Framework.Slider as Slider
@@ -94,7 +94,7 @@ update msg imageConfig =
 
 view : ImageConfig -> Element Msg
 view imageConfig =
-    Element.column [ Element.height Element.fill ]
+    Element.column [ Element.height Element.fill, spacing 30, padding 10 ]
         [ Input.slider Slider.simple
             { onChange = UpdatePositionDelta
             , label = Input.labelAbove [] (text ("Position Delta: " ++ String.fromInt imageConfig.positionDelta))
@@ -131,32 +131,37 @@ view imageConfig =
             , value = toFloat imageConfig.radius
             , thumb = Input.defaultThumb
             }
-        , Input.radioRow
+        , Element.row
             [ padding 10
             , spacing 20
             ]
-            { onChange = ChooseOpacityConfigMode
-            , selected = Just imageConfig.opacityMode
-            , label = Input.labelAbove [] (text "Opacity Mode")
-            , options =
-                [ Input.option Global (text "Global")
-                , Input.option PerCircle (text "Random")
+            [ Input.radioRow
+                [ padding 10
+                , spacing 20
                 ]
-            }
-        , case imageConfig.opacityMode of
-            Global ->
-                Input.slider Slider.simple
-                    { onChange = UpdateOpacity
-                    , label = Input.labelAbove [] (text ("Opacity: " ++ String.fromFloat imageConfig.globalOpacity))
-                    , min = 0
-                    , max = 1
-                    , step = Just 0.05
-                    , value = imageConfig.globalOpacity
-                    , thumb = Input.defaultThumb
-                    }
+                { onChange = ChooseOpacityConfigMode
+                , selected = Just imageConfig.opacityMode
+                , label = Input.labelAbove [] (text "Opacity Mode")
+                , options =
+                    [ Input.option Global (text "Global")
+                    , Input.option PerCircle (text "Random")
+                    ]
+                }
+            , case imageConfig.opacityMode of
+                Global ->
+                    Input.slider Slider.simple
+                        { onChange = UpdateOpacity
+                        , label = Input.labelAbove [] (text ("Opacity: " ++ String.fromFloat imageConfig.globalOpacity))
+                        , min = 0
+                        , max = 1
+                        , step = Just 0.05
+                        , value = imageConfig.globalOpacity
+                        , thumb = Input.defaultThumb
+                        }
 
-            PerCircle ->
-                Element.none
+                PerCircle ->
+                    Element.none
+            ]
         , Input.slider Slider.simple
             { onChange = UpdateStrokeWidth
             , label = Input.labelAbove [] (text ("Stroke Width: " ++ String.fromInt imageConfig.strokeWidth))
