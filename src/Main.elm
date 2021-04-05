@@ -125,7 +125,7 @@ update msg model =
         ChooseDirection ->
             ( model
             , Cmd.batch
-                (List.repeat model.stepsPerUpdate
+                (List.repeat (model.stepsPerUpdate * List.length model.activeCircles)
                     (Random.generate Step (Circle.generateCircleUpdate model.imageConfig))
                 )
             )
