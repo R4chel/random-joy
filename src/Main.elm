@@ -4,6 +4,7 @@ import BoundedDeque exposing (BoundedDeque)
 import Browser
 import Browser.Events exposing (onAnimationFrame)
 import Circle exposing (Circle, CircleUpdate, ColorUpdate, ComparablePosition, InternalColor)
+import Deque exposing (Deque)
 import Element exposing (Element, el, layout)
 import Element.Input as Input
 import Framework exposing (layout)
@@ -25,7 +26,7 @@ import Svg.Attributes exposing (color, cx, cy, fill, fillOpacity, height, r, str
 
 type alias Model =
     { imageConfig : ImageConfig
-    , activeCircles : List Circle
+    , activeCircles : Deque Circle
     , displayText : String
     , visibleCircles : BoundedDeque Circle
     , paused : Bool
@@ -40,7 +41,7 @@ init =
             ImageConfig.init ()
     in
     ( { imageConfig = imageConfig
-      , activeCircles = []
+      , activeCircles = Deque.empty
       , displayText = ""
       , visibleCircles = BoundedDeque.empty imageConfig.maxCircles
       , paused = False
@@ -60,7 +61,7 @@ port getSvg : () -> Cmd msg
 subscriptions : Model -> Sub Msg
 subscriptions model =
     Sub.batch
-        [ if model.paused || List.isEmpty model.activeCircles then
+        [ if model.paused then
             Sub.none
 
           else
@@ -88,17 +89,17 @@ type Msg
 
 step : Model -> CircleUpdate -> Model
 step model circleUpdate =
-    case model.activeCircles of
-        [] ->
+    case Deque.popFront model.activeCircles of
+        ( Nothing, _ ) ->
             model
 
-        hd :: tl ->
+        ( Just hd, tl ) ->
             let
                 updatedCircle =
                     Circle.updateCircle model.imageConfig circleUpdate hd
             in
             { model
-                | activeCircles = tl ++ [ updatedCircle ]
+                | activeCircles = Deque.pushBack updatedCircle tl
                 , visibleCircles =
                     BoundedDeque.pushFront
                         updatedCircle
@@ -111,7 +112,7 @@ update msg model =
     case msg of
         Clear ->
             ( { model
-                | activeCircles = []
+                | activeCircles = Deque.empty
                 , visibleCircles = BoundedDeque.empty model.imageConfig.maxCircles
               }
             , Cmd.none
@@ -125,7 +126,7 @@ update msg model =
         ChooseDirection ->
             ( model
             , Cmd.batch
-                (List.repeat (model.stepsPerUpdate * List.length model.activeCircles)
+                (List.repeat (model.stepsPerUpdate * Deque.length model.activeCircles)
                     (Random.generate Step (Circle.generateCircleUpdate model.imageConfig))
                 )
             )
@@ -162,7 +163,7 @@ update msg model =
 
         AddCircle circle ->
             ( { model
-                | activeCircles = model.activeCircles ++ [ circle ]
+                | activeCircles = Deque.pushBack circle model.activeCircles
                 , visibleCircles = BoundedDeque.pushFront circle model.visibleCircles
               }
             , Cmd.none
