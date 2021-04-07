@@ -31,7 +31,6 @@ type alias Model =
     , displayText : String
     , visibleCircles : BoundedDeque Circle
     , paused : Bool
-    , stepsPerUpdate : Int
     }
 
 
@@ -46,7 +45,6 @@ init =
       , displayText = ""
       , visibleCircles = BoundedDeque.empty imageConfig.maxCircles
       , paused = False
-      , stepsPerUpdate = 5
       }
     , Random.generate AddCircle (Circle.generate imageConfig)
     )
@@ -127,7 +125,7 @@ update msg model =
         ChooseDirection ->
             ( model
             , Cmd.batch
-                (List.repeat (model.stepsPerUpdate * Deque.length model.activeCircles)
+                (List.repeat (model.imageConfig.stepsPerUpdate * Deque.length model.activeCircles)
                     (Random.generate Step (Circle.generateCircleUpdate model.imageConfig))
                 )
             )

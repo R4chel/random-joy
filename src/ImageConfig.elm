@@ -31,6 +31,7 @@ type alias ImageConfig =
     , globalOpacity : Float
     , opacityMode : ConfigMode
     , strokeWidth : Int
+    , stepsPerUpdate : Int
     }
 
 
@@ -49,6 +50,7 @@ init () =
     , globalOpacity = 1
     , strokeWidth = 1
     , opacityMode = Global
+    , stepsPerUpdate = 5
     }
 
 
@@ -64,6 +66,7 @@ type Msg
     | UpdateRadius Float
     | UpdateOpacity Float
     | UpdateStrokeWidth Float
+    | UpdateStepsPerUpdate Float
 
 
 update : Msg -> ImageConfig -> ImageConfig
@@ -74,6 +77,9 @@ update msg imageConfig =
 
         UpdatePositionDelta value ->
             { imageConfig | positionDelta = round value }
+
+        UpdateStepsPerUpdate value ->
+            { imageConfig | stepsPerUpdate = round value }
 
         UpdateColorDelta value ->
             { imageConfig | colorDelta = round value }
@@ -99,6 +105,19 @@ view : ImageConfig -> Element Msg
 view imageConfig =
     Element.column [ Element.height Element.fill, spacing 30, padding 10, Element.width (px 300) ]
         [ Input.slider
+            (Slider.simple
+                ++ [ Element.width (Element.fillPortion 2)
+                   ]
+            )
+            { onChange = UpdateStepsPerUpdate
+            , label = Input.labelAbove FrameworkInput.label (text ("Speed: " ++ String.fromInt imageConfig.stepsPerUpdate))
+            , min = 1
+            , max = 100
+            , step = Just 20
+            , value = toFloat imageConfig.stepsPerUpdate
+            , thumb = Input.thumb Slider.thumb
+            }
+        , Input.slider
             (Slider.simple
                 ++ [ Element.width (Element.fillPortion 2)
                    ]
