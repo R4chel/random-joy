@@ -18,6 +18,7 @@ import ImageConfig exposing (ImageConfig, Msg(..))
 import Random
 import Svg exposing (circle, svg)
 import Svg.Attributes exposing (color, cx, cy, fill, fillOpacity, height, r, stroke, strokeWidth, viewBox, width)
+import Svg.Lazy as SvgLazy
 
 
 
@@ -250,7 +251,7 @@ viewCircle imageConfig c =
 
 
 pixels model =
-    BoundedDeque.takeBack model.imageConfig.maxCircles model.visibleCircles |> List.map (viewCircle model.imageConfig)
+    BoundedDeque.takeBack model.imageConfig.maxCircles model.visibleCircles |> List.map (SvgLazy.lazy2 viewCircle model.imageConfig)
 
 
 modelToSvg model =
