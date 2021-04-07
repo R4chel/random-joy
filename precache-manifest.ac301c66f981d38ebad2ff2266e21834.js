@@ -4,7 +4,7 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/random-joy/favicon.ico"
   },
   {
-    "revision": "61a89a4a7ca52bd5d1e22603850d1b28",
+    "revision": "d73f07bebe56ea0d9872b7ed203cb02f",
     "url": "/random-joy/index.html"
   },
   {
@@ -16,12 +16,12 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/random-joy/manifest.json"
   },
   {
-    "revision": "98f3e5388b974f362de9",
+    "revision": "e63e3ad80c888108fbda",
     "url": "/random-joy/static/css/main.0af5c45f.chunk.css"
   },
   {
-    "revision": "98f3e5388b974f362de9",
-    "url": "/random-joy/static/js/main.98f3e538.chunk.js"
+    "revision": "e63e3ad80c888108fbda",
+    "url": "/random-joy/static/js/main.e63e3ad8.chunk.js"
   },
   {
     "revision": "f9ff1b40944cb7cd7426",
