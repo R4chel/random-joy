@@ -1,7 +1,7 @@
 {
   "main.css": "/random-joy/static/css/main.0af5c45f.chunk.css",
-  "main.js": "/random-joy/static/js/main.7759923e.chunk.js",
-  "main.js.map": "/random-joy/static/js/main.7759923e.chunk.js.map",
+  "main.js": "/random-joy/static/js/main.98f3e538.chunk.js",
+  "main.js.map": "/random-joy/static/js/main.98f3e538.chunk.js.map",
   "runtime~main.js": "/random-joy/static/js/runtime~main.f9ff1b40.js",
   "runtime~main.js.map": "/random-joy/static/js/runtime~main.f9ff1b40.js.map",
   "vendors~main.js": "/random-joy/static/js/vendors~main.0b49ec49.chunk.js",
@@ -11,5 +11,5 @@
   "index.html": "/random-joy/index.html",
   "logo.svg": "/random-joy/logo.svg",
   "manifest.json": "/random-joy/manifest.json",
-  "precache-manifest.2a5f34c82f09e9481b205e54e52ecbca.js": "/random-joy/precache-manifest.2a5f34c82f09e9481b205e54e52ecbca.js"
+  "precache-manifest.ead85b6e8c1b65a9717afe11e18cc28a.js": "/random-joy/precache-manifest.ead85b6e8c1b65a9717afe11e18cc28a.js"
 }
