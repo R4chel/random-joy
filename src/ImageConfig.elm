@@ -1,4 +1,4 @@
-module ImageConfig exposing (ConfigMode(..), ImageConfig, Msg(..), init, update, view)
+module ImageConfig exposing (ConfigMode(..), ImageConfig, ImageRenderingConfig, Msg(..), imageRenderingConfig, init, update, view)
 
 import Basics exposing (Float, Int)
 import Element exposing (Element, fillPortion, padding, px, spacing, text)
@@ -9,7 +9,7 @@ import Framework.Grid as Grid
 import Framework.Input as FrameworkInput
 import Framework.Slider as Slider
 import Html exposing (Html, button, div)
-import Svg.Attributes exposing (strokeWidth)
+import Svg.Attributes exposing (opacity, strokeWidth)
 
 
 
@@ -19,6 +19,14 @@ import Svg.Attributes exposing (strokeWidth)
 type ConfigMode
     = Global
     | PerCircle
+
+
+type alias ImageRenderingConfig =
+    { radius : Int
+    , globalOpacity : Float
+    , opacityMode : ConfigMode
+    , strokeWidth : Int
+    }
 
 
 type alias ImageConfig =
@@ -32,6 +40,15 @@ type alias ImageConfig =
     , opacityMode : ConfigMode
     , strokeWidth : Int
     , stepsPerUpdate : Int
+    }
+
+
+imageRenderingConfig : ImageConfig -> ImageRenderingConfig
+imageRenderingConfig imageConfig =
+    { radius = imageConfig.radius
+    , globalOpacity = imageConfig.globalOpacity
+    , opacityMode = imageConfig.opacityMode
+    , strokeWidth = imageConfig.strokeWidth
     }
 
 

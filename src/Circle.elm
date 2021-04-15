@@ -161,7 +161,7 @@ generate imageConfig =
         (Random.float 0 1)
 
 
-opacity : ImageConfig -> Circle -> Float
+opacity : ImageConfig.ImageRenderingConfig -> Circle -> Float
 opacity imageConfig circle =
     case imageConfig.opacityMode of
         Global ->

@@ -234,7 +234,7 @@ buttonsView model =
     ]
 
 
-viewCircle : ImageConfig -> Circle -> Svg.Svg msg
+viewCircle : ImageConfig.ImageRenderingConfig -> Circle -> Svg.Svg msg
 viewCircle imageConfig c =
     circle
         [ cx (String.fromInt c.position.x)
@@ -249,7 +249,12 @@ viewCircle imageConfig c =
 
 
 pixels model =
-    BoundedDeque.takeBack model.imageConfig.maxCircles model.visibleCircles |> List.map (SvgLazy.lazy2 viewCircle model.imageConfig)
+    let
+        imageRenderingConfig =
+            ImageConfig.imageRenderingConfig model.imageConfig
+    in
+    BoundedDeque.takeBack model.imageConfig.maxCircles model.visibleCircles
+        |> List.map (SvgLazy.lazy2 viewCircle imageRenderingConfig)
 
 
 modelToSvg model =
