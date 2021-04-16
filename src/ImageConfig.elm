@@ -33,7 +33,6 @@ type alias ImageConfig =
     { height : Int
     , width : Int
     , positionDelta : Int
-    , maxCircles : Int
     , radius : Int
     , colorDelta : Int
     , globalOpacity : Float
@@ -62,7 +61,6 @@ init () =
     , width = 500
     , positionDelta = 5
     , colorDelta = 5
-    , maxCircles = 1000
     , radius = 5
     , globalOpacity = 1
     , strokeWidth = 1
@@ -79,7 +77,6 @@ type Msg
     = ChooseOpacityConfigMode ConfigMode
     | UpdatePositionDelta Float
     | UpdateColorDelta Float
-    | UpdateMaxCircles Float
     | UpdateRadius Float
     | UpdateOpacity Float
     | UpdateStrokeWidth Float
@@ -100,9 +97,6 @@ update msg imageConfig =
 
         UpdateColorDelta value ->
             { imageConfig | colorDelta = round value }
-
-        UpdateMaxCircles value ->
-            { imageConfig | maxCircles = round value }
 
         UpdateRadius value ->
             { imageConfig | radius = round value }
@@ -154,15 +148,6 @@ view imageConfig =
             , max = 30
             , step = Just 1
             , value = toFloat imageConfig.colorDelta
-            , thumb = Input.thumb Slider.thumb
-            }
-        , Input.slider Slider.simple
-            { onChange = UpdateMaxCircles
-            , label = Input.labelAbove FrameworkInput.label (text ("Max Circles: " ++ String.fromInt imageConfig.maxCircles))
-            , min = 1
-            , max = 150001
-            , step = Just 100
-            , value = toFloat imageConfig.maxCircles
             , thumb = Input.thumb Slider.thumb
             }
         , Input.slider Slider.simple

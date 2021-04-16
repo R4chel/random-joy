@@ -29,7 +29,7 @@ type alias Model =
     { imageConfig : ImageConfig
     , activeCircles : Deque Circle
     , displayText : String
-    , visibleCircles : BoundedDeque Circle
+    , visibleCircles : List Circle
     , paused : Bool
     }
 
@@ -43,7 +43,7 @@ init =
     ( { imageConfig = imageConfig
       , activeCircles = Deque.empty
       , displayText = ""
-      , visibleCircles = BoundedDeque.empty imageConfig.maxCircles
+      , visibleCircles = []
       , paused = False
       }
     , Random.generate AddCircle (Circle.generate imageConfig)
@@ -100,9 +100,8 @@ step model circleUpdate =
             { model
                 | activeCircles = Deque.pushBack updatedCircle tl
                 , visibleCircles =
-                    BoundedDeque.pushFront
-                        updatedCircle
-                        model.visibleCircles
+                    updatedCircle
+                        :: model.visibleCircles
             }
 
 
@@ -112,7 +111,7 @@ update msg model =
         Clear ->
             ( { model
                 | activeCircles = Deque.empty
-                , visibleCircles = BoundedDeque.empty model.imageConfig.maxCircles
+                , visibleCircles = []
               }
             , Cmd.none
             )
@@ -141,16 +140,6 @@ update msg model =
         GetSvg ->
             ( model, getSvg () )
 
-        UpdateImageConfig ((ImageConfig.UpdateMaxCircles value) as imageConfigUpdate) ->
-            ( { model
-                | imageConfig =
-                    ImageConfig.update imageConfigUpdate
-                        model.imageConfig
-                , visibleCircles = BoundedDeque.resize (\_ -> round value) model.visibleCircles
-              }
-            , Cmd.none
-            )
-
         UpdateImageConfig imageConfigUpdate ->
             ( { model
                 | imageConfig =
@@ -163,7 +152,7 @@ update msg model =
         AddCircle circle ->
             ( { model
                 | activeCircles = Deque.pushBack circle model.activeCircles
-                , visibleCircles = BoundedDeque.pushFront circle model.visibleCircles
+                , visibleCircles = circle :: model.visibleCircles
               }
             , Cmd.none
             )
@@ -253,7 +242,7 @@ pixels model =
         imageRenderingConfig =
             ImageConfig.imageRenderingConfig model.imageConfig
     in
-    BoundedDeque.takeBack model.imageConfig.maxCircles model.visibleCircles
+    model.visibleCircles
         |> List.map (SvgLazy.lazy2 viewCircle imageRenderingConfig)
 
 
