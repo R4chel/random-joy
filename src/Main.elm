@@ -18,6 +18,7 @@ import ImageConfig exposing (ImageConfig, Msg(..))
 import Random
 import Svg exposing (circle, svg)
 import Svg.Attributes exposing (color, cx, cy, fill, fillOpacity, height, r, stroke, strokeWidth, viewBox, width)
+import Svg.Keyed as SvgKeyed
 import Svg.Lazy as SvgLazy
 
 
@@ -29,8 +30,9 @@ type alias Model =
     { imageConfig : ImageConfig
     , activeCircles : Deque Circle
     , displayText : String
-    , visibleCircles : BoundedDeque Circle
+    , visibleCircles : BoundedDeque ( String, Circle )
     , paused : Bool
+    , nextId : Int
     }
 
 
@@ -45,6 +47,7 @@ init =
       , displayText = ""
       , visibleCircles = BoundedDeque.empty imageConfig.maxCircles
       , paused = False
+      , nextId = 0
       }
     , Random.generate AddCircle (Circle.generate imageConfig)
     )
@@ -101,8 +104,9 @@ step model circleUpdate =
                 | activeCircles = Deque.pushBack updatedCircle tl
                 , visibleCircles =
                     BoundedDeque.pushFront
-                        updatedCircle
+                        ( String.fromInt model.nextId, updatedCircle )
                         model.visibleCircles
+                , nextId = model.nextId + 1
             }
 
 
@@ -163,7 +167,8 @@ update msg model =
         AddCircle circle ->
             ( { model
                 | activeCircles = Deque.pushBack circle model.activeCircles
-                , visibleCircles = BoundedDeque.pushFront circle model.visibleCircles
+                , visibleCircles = BoundedDeque.pushFront ( String.fromInt model.nextId, circle ) model.visibleCircles
+                , nextId = model.nextId + 1
               }
             , Cmd.none
             )
@@ -248,13 +253,14 @@ viewCircle imageConfig c =
         []
 
 
+pixels : Model -> List ( String, Svg.Svg Msg )
 pixels model =
     let
         imageRenderingConfig =
             ImageConfig.imageRenderingConfig model.imageConfig
     in
     BoundedDeque.takeBack model.imageConfig.maxCircles model.visibleCircles
-        |> List.map (SvgLazy.lazy2 viewCircle imageRenderingConfig)
+        |> List.map (\( id, circle ) -> ( id, SvgLazy.lazy2 viewCircle imageRenderingConfig circle ))
 
 
 modelToSvg model =
@@ -264,7 +270,8 @@ modelToSvg model =
         , height (String.fromInt model.imageConfig.height)
         , viewBox (String.join " " [ "0", "0", String.fromInt model.imageConfig.width, String.fromInt model.imageConfig.height ])
         ]
-        (pixels model)
+        [ SvgKeyed.node "g" [] (pixels model)
+        ]
 
 
 
