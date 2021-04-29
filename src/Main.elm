@@ -3,7 +3,7 @@ port module Main exposing (..)
 import BoundedDeque exposing (BoundedDeque)
 import Browser
 import Browser.Events exposing (onAnimationFrame)
-import Circle exposing (Circle, CircleUpdate, ColorUpdate, ComparablePosition, InternalColor)
+import Circle exposing (Circle, CircleUpdate, ComparablePosition)
 import Deque exposing (Deque)
 import Element exposing (Element, el, layout)
 import Element.Input as Input

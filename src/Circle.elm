@@ -1,34 +1,14 @@
-module Circle exposing (Circle, CircleUpdate, ColorUpdate, ComparablePosition, InternalColor, fillColor, generate, generateCircleUpdate, opacity, updateCircle)
+module Circle exposing (Circle, CircleUpdate, ComparablePosition, fillColor, generate, generateCircleUpdate, opacity, updateCircle)
 
 import Color exposing (Color)
 import Direction exposing (Direction)
 import ImageConfig exposing (ConfigMode(..), ImageConfig)
+import InternalColor exposing (ColorUpdate, InternalColor, generate, generateColorUpdate, toCssColor)
 import Random
-
-
-type alias ColorUpdate =
-    { rDelta : Int, gDelta : Int, bDelta : Int }
 
 
 type alias CircleUpdate =
     { direction : Direction, colorUpdate : ColorUpdate, opacity : Float }
-
-
-generateColorUpdate : ImageConfig -> Random.Generator ColorUpdate
-generateColorUpdate imageConfig =
-    let
-        low =
-            -1 * imageConfig.colorDelta
-    in
-    let
-        high =
-            imageConfig.colorDelta
-    in
-    Random.map3
-        ColorUpdate
-        (Random.uniform low [ high ])
-        (Random.uniform low [ high ])
-        (Random.uniform low [ high ])
 
 
 generateCircleUpdate : ImageConfig -> Random.Generator CircleUpdate
@@ -56,33 +36,6 @@ generatePosition imageConfig =
 
 type alias ComparablePosition =
     ( Int, Int )
-
-
-type alias InternalColor =
-    { red : Int
-    , green : Int
-    , blue : Int
-    }
-
-
-internalColorToColor : InternalColor -> Color
-internalColorToColor color =
-    Color.rgb255 color.red color.green color.blue
-
-
-internalColorToCssColor : InternalColor -> String
-internalColorToCssColor color =
-    internalColorToColor color
-        |> Color.toCssString
-
-
-internalColorGenerate : Random.Generator InternalColor
-internalColorGenerate =
-    Random.map3
-        InternalColor
-        (Random.int 0 255)
-        (Random.int 0 255)
-        (Random.int 0 255)
 
 
 type alias Circle =
@@ -148,7 +101,7 @@ updateCircle imageConfig circleUpdate circle =
 
 fillColor : Circle -> String
 fillColor circle =
-    internalColorToCssColor circle.color
+    InternalColor.toCssColor circle.color
 
 
 generate : ImageConfig -> Random.Generator Circle
@@ -156,7 +109,7 @@ generate imageConfig =
     Random.map4
         Circle
         (generatePosition imageConfig)
-        internalColorGenerate
+        InternalColor.generate
         (Random.int 1 20)
         (Random.float 0 1)
 
