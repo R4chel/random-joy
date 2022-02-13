@@ -1,5 +1,4 @@
-# Random Joy
-
+# Elm Art
 This is an exploration of generative art in Elm. 
 
 
